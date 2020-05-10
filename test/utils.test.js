@@ -5,6 +5,7 @@ import {
   getDateAccordingToMonth,
   getValueType,
   toExtendedDay,
+  deepCloneObject,
 } from '../src/shared/generalUtils';
 import {
   PERSIAN_MONTHS,
@@ -69,6 +70,13 @@ describe('Utility Functions', () => {
         getValueType(malformedDate);
       }).toThrow(TypeError);
     });
+
+    test('includes undefined values in deep cloning object', () => {
+      expect(deepCloneObject({ from: undefined, to: undefined })).toEqual({
+        from: null,
+        to: null,
+      });
+    });
   });
 
   describe('Language Dependent Utilities', () => {
@@ -76,8 +84,8 @@ describe('Utility Functions', () => {
     let persianUtils = null;
 
     beforeAll(() => {
-      gregorianUtils = utils(false);
-      persianUtils = utils(true);
+      gregorianUtils = utils();
+      persianUtils = utils('fa');
     });
 
     test('returns correct language digits', () => {

@@ -1,9 +1,12 @@
 import { getDateAccordingToMonth } from './generalUtils';
 
 const getSlideDate = ({ parent, isInitialActiveChild, activeDate, monthChangeDirection }) => {
-  if (!parent) return activeDate;
+  if (!parent) {
+    return isInitialActiveChild ? activeDate : getDateAccordingToMonth(activeDate, 'NEXT');
+  }
   const child = parent.children[isInitialActiveChild ? 0 : 1];
-  const isActiveSlide = child.classList.contains('-shown');
+  const isActiveSlide =
+    child.classList.contains('-shown') || child.classList.contains('-shownAnimated'); // check -shownAnimated for Safari bug
   return isActiveSlide ? activeDate : getDateAccordingToMonth(activeDate, monthChangeDirection);
 };
 
@@ -14,6 +17,8 @@ const animateContent = ({ parent, direction }) => {
   const baseClass = shownItem.classList[0];
   const isNextMonth = direction === 'NEXT';
   const getAnimationClass = value => (value ? '-hiddenNext' : '-hiddenPrevious');
+  hiddenItem.style.transition = 'none';
+  shownItem.style.transition = '';
   shownItem.className = `${baseClass} ${getAnimationClass(!isNextMonth)}`;
   hiddenItem.className = `${baseClass} ${getAnimationClass(isNextMonth)}`;
   hiddenItem.classList.add('-shownAnimated');
